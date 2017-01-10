@@ -140,6 +140,12 @@ public: // in-record
   void
   deleteInRecord(const Face& face);
 
+  bool
+  hasNonExpiredLongLivedInRecord(time::steady_clock::time_point now);
+
+  void
+  deleteExpiredOrNonLongLivedInRecords(time::steady_clock::time_point now);
+
   /** \brief delete all in-records
    */
   void

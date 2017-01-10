@@ -33,6 +33,13 @@ OutRecord::OutRecord(Face& face)
 {
 }
 
+void
+OutRecord::update(const Interest& interest)
+{
+  this->FaceRecord::update(interest);
+  m_isLongLived = interest.isLongLived();
+}
+
 bool
 OutRecord::setIncomingNack(const lp::Nack& nack)
 {

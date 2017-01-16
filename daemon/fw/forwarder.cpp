@@ -396,7 +396,8 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 
       // set PIT straggler timer
       this->setStragglerTimer(pitEntry, true, data.getFreshnessPeriod());
-    }
+    } else
+    	this->setUnsatisfyTimer(pitEntry);
   }
 
   // foreach pending downstream

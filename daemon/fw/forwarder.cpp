@@ -215,7 +215,7 @@ Forwarder::onContentStoreMiss(const Face& inFace, const shared_ptr<pit::Entry>& 
 
   if(interest.isLongLived()) {
 	  for(Face& current : m_faceTable) {
-		  if(current.getId() != inFace.getId())
+		  if(current.getId() != inFace.getId() && current.getId() > nfd::face::FACEID_RESERVED_MAX)
 			  this->onOutgoingInterest(pitEntry, current, false);
 	  }
   } else {

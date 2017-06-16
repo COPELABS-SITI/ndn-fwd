@@ -241,6 +241,12 @@ TcpFactory::getChannels() const
   return getChannelsFromMap(m_channels);
 }
 
+void TcpFactory::shutdown() {
+  NFD_LOG_INFO("Shutdown");
+  for(auto &current : m_channels)
+    current.second->close();
+}
+
 shared_ptr<TcpChannel>
 TcpFactory::findChannel(const tcp::Endpoint& localEndpoint) const
 {

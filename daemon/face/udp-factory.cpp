@@ -335,6 +335,12 @@ UdpFactory::getChannels() const
   return getChannelsFromMap(m_channels);
 }
 
+void UdpFactory::shutdown() {
+  NFD_LOG_INFO("Shutdown");
+  for(auto &current : m_channels)
+    current.second->close();
+}
+
 shared_ptr<UdpChannel>
 UdpFactory::findChannel(const udp::Endpoint& localEndpoint) const
 {

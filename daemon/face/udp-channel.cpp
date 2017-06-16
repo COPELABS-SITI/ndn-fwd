@@ -89,6 +89,11 @@ UdpChannel::listen(const FaceCreatedCallback& onFaceCreated,
   this->waitForNewPeer(onFaceCreated, onReceiveFailed);
 }
 
+void UdpChannel::close() {
+    NFD_LOG_DEBUG("Closing " << m_localEndpoint);
+    m_socket.close();
+}
+
 void
 UdpChannel::waitForNewPeer(const FaceCreatedCallback& onFaceCreated,
                            const FaceCreationFailedCallback& onReceiveFailed)

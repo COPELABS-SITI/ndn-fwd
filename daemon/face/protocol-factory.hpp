@@ -69,6 +69,9 @@ public: // registry
   static std::set<std::string>
   listRegistered();
 
+  virtual void
+  shutdown();
+
 public:
   /**
    * \brief Base class for all exceptions thrown by protocol factories

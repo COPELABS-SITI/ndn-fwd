@@ -89,6 +89,12 @@ TcpChannel::connect(const tcp::Endpoint& remoteEndpoint,
                                    onFaceCreated, onConnectFailed));
 }
 
+void TcpChannel::close() {
+  NFD_LOG_DEBUG("Closing " << m_localEndpoint);
+  m_acceptor.close();
+  m_acceptSocket.close();
+}
+
 size_t
 TcpChannel::size() const
 {

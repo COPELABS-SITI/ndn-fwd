@@ -54,5 +54,7 @@ ProtocolFactory::listRegistered()
   return factoryIds;
 }
 
+void ProtocolFactory::shutdown() {}
+
 } // namespace face
 } // namespace nfd

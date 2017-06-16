@@ -160,6 +160,9 @@ public:
                       const std::string& multicastPort,
                       const std::string& networkInterfaceName = "");
 
+  virtual void
+  shutdown() override;
+
 PUBLIC_WITH_TESTS_ELSE_PRIVATE:
   void
   prohibitEndpoint(const udp::Endpoint& endpoint);

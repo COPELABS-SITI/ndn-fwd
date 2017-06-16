@@ -151,6 +151,12 @@ WebSocketFactory::getChannels() const
   return getChannelsFromMap(m_channels);
 }
 
+void WebSocketFactory::shutdown() {
+  NFD_LOG_INFO("Shutdown");
+  for(auto &current : m_channels)
+    current.second->close();
+}
+
 shared_ptr<WebSocketChannel>
 WebSocketFactory::findChannel(const websocket::Endpoint& endpoint) const
 {

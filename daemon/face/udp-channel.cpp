@@ -182,4 +182,9 @@ UdpChannel::createFace(const udp::Endpoint& remoteEndpoint, ndn::nfd::FacePersis
   return {true, face};
 }
 
+void UdpChannel::close() {
+    NFD_LOG_DEBUG("Closing " << m_localEndpoint);
+    m_socket.close();
+}
+
 } // namespace nfd

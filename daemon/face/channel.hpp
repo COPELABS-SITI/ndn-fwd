@@ -50,6 +50,9 @@ public:
   virtual
   ~Channel();
 
+  virtual void
+  close();
+
   const FaceUri&
   getUri() const;
 

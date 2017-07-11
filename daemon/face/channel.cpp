@@ -31,6 +31,8 @@ Channel::~Channel()
 {
 }
 
+void Channel::close() {}
+
 void
 Channel::setUri(const FaceUri& uri)
 {

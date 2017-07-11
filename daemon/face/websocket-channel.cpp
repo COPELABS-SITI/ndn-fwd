@@ -153,4 +153,8 @@ WebSocketChannel::size() const
   return m_channelFaces.size();
 }
 
+void WebSocketChannel::close() {
+    NFD_LOG_DEBUG("Closing " << m_localEndpoint);
+
+}
 } // namespace nfd

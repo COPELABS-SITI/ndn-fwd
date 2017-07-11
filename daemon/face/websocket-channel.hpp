@@ -69,6 +69,9 @@ public:
   bool
   isListening() const;
 
+virtual void
+  close() override;
+
 PUBLIC_WITH_TESTS_ELSE_PRIVATE:
   /** \pre listen hasn't been invoked
    */

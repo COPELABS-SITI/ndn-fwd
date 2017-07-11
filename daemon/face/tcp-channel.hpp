@@ -78,6 +78,7 @@ public:
           const FaceCreationFailedCallback& onConnectFailed,
           const time::seconds& timeout = time::seconds(4));
 
+  void close() override;
   /**
    * \brief Get number of faces in the channel
    */

@@ -139,6 +139,9 @@ public:
                       const std::string& multicastPort,
                       const std::string& networkInterfaceName = "");
 
+virtual void
+  shutdown() override;
+
   /**
    * \brief Get map of configured multicast faces
    */

@@ -313,4 +313,10 @@ UdpFactory::findMulticastFace(const udp::Endpoint& localEndpoint) const
     return nullptr;
 }
 
+void UdpFactory::shutdown() {
+  NFD_LOG_INFO("Shutdown");
+  for(auto &current : m_channels)
+    current.second->close();
+}
+
 } // namespace nfd

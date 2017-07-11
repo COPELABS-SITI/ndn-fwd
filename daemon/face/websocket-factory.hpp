@@ -69,6 +69,9 @@ public: // from ProtocolFactory
   virtual std::vector<shared_ptr<const Channel>>
   getChannels() const override;
 
+virtual void
+  shutdown() override;
+
 private:
   /**
    * \brief Look up WebSocketChannel using specified local endpoint

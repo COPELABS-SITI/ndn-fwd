@@ -82,4 +82,8 @@ WebSocketFactory::findChannel(const websocket::Endpoint& endpoint) const
     return nullptr;
 }
 
+void WebSocketFactory::shutdown() {
+  for(auto &current : m_channels)
+    current.second->close();
+}
 } // namespace nfd

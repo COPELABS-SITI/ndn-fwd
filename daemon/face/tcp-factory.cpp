@@ -168,4 +168,10 @@ TcpFactory::findChannel(const tcp::Endpoint& localEndpoint) const
     return nullptr;
 }
 
+void TcpFactory::shutdown() {
+  NFD_LOG_INFO("Shutdown");
+  for(auto &current : m_channels)
+    current.second->close();
+}
+
 } // namespace nfd

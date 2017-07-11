@@ -72,6 +72,8 @@ public:
 
   virtual std::vector<shared_ptr<const Channel>>
   getChannels() const = 0;
+
+  virtual void shutdown();
 };
 
 } // namespace nfd

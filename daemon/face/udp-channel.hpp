@@ -89,6 +89,8 @@ public:
   bool
   isListening() const;
 
+  void close() override;
+
 private:
   void
   waitForNewPeer(const FaceCreatedCallback& onFaceCreated,

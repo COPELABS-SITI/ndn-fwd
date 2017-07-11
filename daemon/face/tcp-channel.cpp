@@ -220,4 +220,9 @@ TcpChannel::handleConnectTimeout(const shared_ptr<ip::tcp::socket>& socket,
     onConnectFailed(504, "Connect to remote endpoint timed out");
 }
 
+void TcpChannel::close() {
+  NFD_LOG_DEBUG("Closing " << m_localEndpoint);
+  m_acceptor.close();
+  m_acceptSocket.close();
+}
 } // namespace nfd

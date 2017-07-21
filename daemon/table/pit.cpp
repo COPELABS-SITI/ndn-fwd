@@ -80,6 +80,10 @@ Pit::findOrInsert(const Interest& interest, bool allowInsert)
 
   auto entry = make_shared<Entry>(interest);
   nte->insertPitEntry(entry);
+
+  // Signal addition of PIT entry
+  this->afterAdd(*entry);
+
   ++m_nItems;
   return {entry, true};
 }
@@ -106,7 +110,11 @@ Pit::erase(Entry* entry, bool canDeleteNte)
   name_tree::Entry* nte = m_nameTree.getEntry(*entry);
   BOOST_ASSERT(nte != nullptr);
 
+  // Signal removal of PIT Entry
+  this->beforeRemove(*entry);
+
   nte->erasePitEntry(entry);
+
   if (canDeleteNte) {
     m_nameTree.eraseIfEmpty(nte);
   }

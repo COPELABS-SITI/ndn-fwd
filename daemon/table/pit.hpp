@@ -117,6 +117,10 @@ public: // enumeration
     return Iterator();
   }
 
+public: // Signals
+    signal::Signal<Pit, Entry&> afterAdd;
+    signal::Signal<Pit, Entry&> beforeRemove;
+
 private:
   void
   erase(Entry* pitEntry, bool canDeleteNte);

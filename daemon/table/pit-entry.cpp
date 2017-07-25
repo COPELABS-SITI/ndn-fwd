@@ -94,6 +94,13 @@ Entry::getOutRecord(const Face& face)
 }
 
 OutRecordCollection::iterator
+Entry::insertOutRecord(Face& face)
+{
+    m_outRecords.emplace_front(face);
+    return m_outRecords.begin();
+}
+
+OutRecordCollection::iterator
 Entry::insertOrUpdateOutRecord(Face& face, const Interest& interest)
 {
   BOOST_ASSERT(this->canMatch(interest));

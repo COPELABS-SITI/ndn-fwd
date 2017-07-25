@@ -276,6 +276,9 @@ PROTECTED_WITH_TESTS_ELSE_PRIVATE:
     trigger(m_strategyChoice.findEffectiveStrategy(pitEntry));
   }
 
+public:
+    signal::Signal<Forwarder, const uint32_t> beforeOutRecordUpdate;
+
 private:
   ForwarderCounters m_counters;
 

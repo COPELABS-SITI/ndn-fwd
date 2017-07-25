@@ -28,6 +28,7 @@
 
 #include "pit-entry.hpp"
 #include "pit-iterator.hpp"
+#include "pit-in-record.hpp"
 
 namespace nfd {
 namespace pit {
@@ -117,8 +118,7 @@ public: // enumeration
     return Iterator();
   }
 
-public: // Signals
-    signal::Signal<Pit, Entry&> afterAdd;
+public: // Signal
     signal::Signal<Pit, Entry&> beforeRemove;
 
 private:

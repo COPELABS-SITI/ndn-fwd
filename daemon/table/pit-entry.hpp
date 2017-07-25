@@ -203,6 +203,12 @@ public: // out-record
   OutRecordCollection::iterator
   getOutRecord(const Face& face);
 
+  /** \brief insert an out-record
+   *  \return an iterator to the new out-record
+   */
+  OutRecordCollection::iterator
+  insertOutRecord(Face& face);
+
   /** \brief insert or update an out-record
    *  \return an iterator to the new or updated out-record
    */

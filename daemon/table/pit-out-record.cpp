@@ -44,5 +44,12 @@ OutRecord::setIncomingNack(const lp::Nack& nack)
   return true;
 }
 
+void
+OutRecord::update(const Interest& interest)
+{
+  this->FaceRecord::update(interest);
+  m_longLived = interest.isLongLived();
+}
+
 } // namespace pit
 } // namespace nfd

@@ -175,7 +175,7 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   this->cancelUnsatisfyAndStragglerTimer(*pitEntry);
 
   // is pending?
-  if (!pitEntry->hasInRecords()) {
+  if (!pitEntry->hasInRecords() && !interest.isLongLived()) {
     m_cs.find(interest,
               bind(&Forwarder::onContentStoreHit, this, ref(inFace), pitEntry, _1, _2),
               bind(&Forwarder::onContentStoreMiss, this, ref(inFace), pitEntry, _1));
@@ -248,7 +248,8 @@ Forwarder::onContentStoreHit(const Face& inFace, const shared_ptr<pit::Entry>& p
   // XXX should we lookup PIT for other Interests that also match csMatch?
 
   // set PIT straggler timer
-  this->setStragglerTimer(pitEntry, true, data.getFreshnessPeriod());
+  if (!pitEntry->hasNonExpiredLongLivedInRecord(time::steady_clock::now()))
+    this->setStragglerTimer(pitEntry, true, data.getFreshnessPeriod());
 
   // goto outgoing Data pipeline
   this->onOutgoingData(data, *const_pointer_cast<Face>(inFace.shared_from_this()));
@@ -286,9 +287,12 @@ Forwarder::onInterestReject(const shared_ptr<pit::Entry>& pitEntry)
 
   // cancel unsatisfy & straggler timer
   this->cancelUnsatisfyAndStragglerTimer(*pitEntry);
-
-  // set PIT straggler timer
-  this->setStragglerTimer(pitEntry, false);
+  if(!pitEntry->hasNonExpiredLongLivedInRecord(time::steady_clock::now())) {
+    // cancel unsatisfy & straggler timer
+    this->cancelUnsatisfyAndStragglerTimer(*pitEntry);
+    // set PIT straggler timer
+    this->setStragglerTimer(pitEntry, false);
+  }
 }
 
 void
@@ -372,8 +376,17 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
     this->insertDeadNonceList(*pitEntry, true, data.getFreshnessPeriod(), &inFace);
 
     // mark PIT satisfied
-    pitEntry->clearInRecords();
-    pitEntry->deleteOutRecord(inFace);
+    pitEntry->deleteExpiredOrNonLongLivedInRecords(now);
+
+    if(!pitEntry->hasNonExpiredLongLivedInRecord(now)) {
+      // Dead Nonce List insert if necessary (for out-record of inFace)
+      this->insertDeadNonceList(*pitEntry, true, data.getFreshnessPeriod(), &inFace);
+      pitEntry->deleteOutRecord(inFace);
+
+      // set PIT straggler timer
+      this->setStragglerTimer(pitEntry, true, data.getFreshnessPeriod());
+    } else
+       this->setUnsatisfyTimer(pitEntry);
 
     // set PIT straggler timer
     this->setStragglerTimer(pitEntry, true, data.getFreshnessPeriod());

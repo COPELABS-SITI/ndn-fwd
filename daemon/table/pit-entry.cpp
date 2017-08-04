@@ -80,6 +80,27 @@ Entry::deleteInRecord(const Face& face)
   }
 }
 
+bool
+Entry::hasNonExpiredLongLivedInRecord(time::steady_clock::time_point now)
+{
+  for(InRecordCollection::iterator r = m_inRecords.begin(); r != m_inRecords.end(); r++) {
+    if(r->getExpiry() > now && r->getInterest().isLongLived()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void
+Entry::deleteExpiredOrNonLongLivedInRecords(time::steady_clock::time_point now)
+{
+  for(InRecordCollection::iterator r = m_inRecords.begin(); r != m_inRecords.end(); r++) {
+    if(r->getExpiry() <= now || !r->getInterest().isLongLived()) {
+      r = m_inRecords.erase(r);
+    }
+  }
+}
+
 void
 Entry::clearInRecords()
 {

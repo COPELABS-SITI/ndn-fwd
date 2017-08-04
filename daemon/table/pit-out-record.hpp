@@ -39,6 +39,9 @@ public:
   explicit
   OutRecord(Face& face);
 
+  void
+  update(const Interest& interest);
+
   /** \return last NACK returned by \p getFace()
    *
    *  A nullptr return value means the Interest is still pending or has timed out.
@@ -72,8 +75,15 @@ public:
     m_incomingNack.reset();
   }
 
+  const bool
+  isLongLived() const
+  {
+    return m_longLived;
+  }
+
 private:
   unique_ptr<lp::NackHeader> m_incomingNack;
+  bool m_longLived;
 };
 
 } // namespace pit

@@ -23,6 +23,7 @@
  * NFD, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "table/fib.hpp"
 #include "forwarder.hpp"
 #include "algorithm.hpp"
 #include "best-route-strategy2.hpp"
@@ -338,6 +339,29 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
     NFD_LOG_DEBUG("onIncomingData face=" << inFace.getId() <<
                   " data=" << data.getName() << " violates /localhost");
     // (drop)
+    return;
+  }
+
+  // Logic of Pushed-Data
+  if (data.isPushed()) {
+    NFD_LOG_DEBUG("onPushedData");
+    if(!m_cs.contains(data)) {
+        // If Data was never seen, store it and forward it.
+        // TODO: improve the forwarding strategy adopted here.
+        m_cs.insert(data);
+        const fib::Entry& fibEntry = m_fib.findLongestPrefixMatch(data.getName());
+        const fib::NextHopList& nexthops = fibEntry.getNextHops();
+        // Determine the minimum cost in the RIB entry.
+        uint64_t minCost = std::numeric_limits<uint64_t>::max();
+        for(auto const& nh : nexthops)
+            if(nh.getCost() < minCost)
+              minCost = nh.getCost();
+        // Forward to all devices with minCost.
+        for(auto const& nh : nexthops)
+            if(nh.getCost() == minCost)
+              this->onOutgoingData(data, nh.getFace());
+    }
+    // stop pipeline here.
     return;
   }
 

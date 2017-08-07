@@ -85,6 +85,8 @@ public:
        const HitCallback& hitCallback,
        const MissCallback& missCallback) const;
 
+  bool contains(const Data& data);
+
   void
   erase(const Name& exactName)
   {

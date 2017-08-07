@@ -71,6 +71,12 @@ Entry::canSatisfy(const Interest& interest) const
   return true;
 }
 
+bool
+Entry::isIdentical(const Data& data) const
+{
+  return this->hasData() && m_data->getName().equals(data.getName());
+}
+
 void
 Entry::reset()
 {

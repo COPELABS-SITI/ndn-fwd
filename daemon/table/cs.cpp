@@ -204,6 +204,12 @@ Cs::setPolicyImpl(unique_ptr<Policy> policy)
   BOOST_ASSERT(m_policy->getCs() == this);
 }
 
+bool Cs::contains(const Data& data)
+{
+    iterator current = std::find_if(m_table.begin(), m_table.end(), bind(&cs::EntryImpl::isIdentical, _1, data));
+    return current != m_table.end();
+}
+
 void
 Cs::dump()
 {

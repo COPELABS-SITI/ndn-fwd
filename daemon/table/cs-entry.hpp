@@ -100,6 +100,11 @@ public: // exposed through ContentStore enumeration
   bool
   canSatisfy(const Interest& interest) const;
 
+  /** \brief determines whether the Data packet is stored in this entry
+   */
+  bool
+  isIdentical(const Data& data) const;
+
 public: // used by generic ContentStore implementation
   /** \return true if a Data packet is stored
    */

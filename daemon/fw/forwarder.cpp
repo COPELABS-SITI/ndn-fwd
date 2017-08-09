@@ -328,7 +328,7 @@ void
 Forwarder::onIncomingData(Face& inFace, const Data& data)
 {
   // receive Data
-  NFD_LOG_DEBUG("onIncomingData face=" << inFace.getId() << " data=" << data.getName());
+  NFD_LOG_DEBUG("onIncomingData face=" << inFace.getId() << " data=" << data.getName() << " pushed=" << data.isPushed());
   data.setTag(make_shared<lp::IncomingFaceIdTag>(inFace.getId()));
   ++m_counters.nInData;
 
@@ -344,24 +344,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 
   // Logic of Pushed-Data
   if (data.isPushed()) {
-    NFD_LOG_DEBUG("onPushedData");
-    if(!m_cs.contains(data)) {
-        // If Data was never seen, store it and forward it.
-        // TODO: improve the forwarding strategy adopted here.
-        m_cs.insert(data);
-        const fib::Entry& fibEntry = m_fib.findLongestPrefixMatch(data.getName());
-        const fib::NextHopList& nexthops = fibEntry.getNextHops();
-        // Determine the minimum cost in the RIB entry.
-        uint64_t minCost = std::numeric_limits<uint64_t>::max();
-        for(auto const& nh : nexthops)
-            if(nh.getCost() < minCost)
-              minCost = nh.getCost();
-        // Forward to all devices with minCost.
-        for(auto const& nh : nexthops)
-            if(nh.getCost() == minCost)
-              this->onOutgoingData(data, nh.getFace());
-    }
-    // stop pipeline here.
+    this->onPushedData(data);
     return;
   }
 
@@ -424,6 +407,27 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
     // goto outgoing Data pipeline
     this->onOutgoingData(data, *pendingDownstream);
   }
+}
+
+void
+Forwarder::onPushedData(const Data& data) {
+    NFD_LOG_DEBUG("onIncomingPushedData");
+    if(!m_cs.contains(data)) {
+        // If Data was never seen, store it and forward it.
+        // TODO: improve the forwarding strategy adopted here.
+        m_cs.insert(data);
+        const fib::Entry& fibEntry = m_fib.findLongestPrefixMatch(data.getName());
+        const fib::NextHopList& nexthops = fibEntry.getNextHops();
+        // Determine the minimum cost in the RIB entry.
+        uint64_t minCost = std::numeric_limits<uint64_t>::max();
+        for(auto const& nh : nexthops)
+            if(nh.getCost() < minCost)
+              minCost = nh.getCost();
+        // Forward to all devices with minCost.
+        for(auto const& nh : nexthops)
+            if(nh.getCost() == minCost)
+              this->onOutgoingData(data, nh.getFace());
+    }
 }
 
 void

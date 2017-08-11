@@ -344,7 +344,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 
   // Logic of Pushed-Data
   if (data.isPushed()) {
-    this->onPushedData(data);
+    this->onPushedData(inFace, data);
     return;
   }
 
@@ -410,7 +410,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 }
 
 void
-Forwarder::onPushedData(const Data& data) {
+Forwarder::onPushedData(const Face& face, const Data& data) {
     NFD_LOG_DEBUG("onIncomingPushedData");
     if(!m_cs.contains(data)) {
         // If Data was never seen, store it and forward it.
@@ -425,7 +425,7 @@ Forwarder::onPushedData(const Data& data) {
               minCost = nh.getCost();
         // Forward to all devices with minCost.
         for(auto const& nh : nexthops)
-            if(nh.getCost() == minCost)
+            if(nh.getCost() == minCost && face.getId() != nh.getFace().getId())
               this->onOutgoingData(data, nh.getFace());
     }
 }

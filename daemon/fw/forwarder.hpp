@@ -226,7 +226,7 @@ PUBLIC_WITH_TESTS_ELSE_PRIVATE: // pipelines
   /** \brief incoming Pushed-Data pipeline
    */
   VIRTUAL_WITH_TESTS void
-  onPushedData(const Data& data);
+  onPushedData(const Face& face, const Data& data);
 
   /** \brief Data unsolicited pipeline
    */

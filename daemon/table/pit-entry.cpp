@@ -84,7 +84,7 @@ bool
 Entry::hasNonExpiredLongLivedInRecord(time::steady_clock::time_point now)
 {
   for(InRecordCollection::iterator r = m_inRecords.begin(); r != m_inRecords.end(); r++) {
-    if(r->getExpiry() > now && r->getInterest().isLongLived()) {
+    if(r->getInterest().isLongLived()) {
       return true;
     }
   }
@@ -95,7 +95,7 @@ void
 Entry::deleteExpiredOrNonLongLivedInRecords(time::steady_clock::time_point now)
 {
   for(InRecordCollection::iterator r = m_inRecords.begin(); r != m_inRecords.end(); r++) {
-    if(r->getExpiry() <= now || !r->getInterest().isLongLived()) {
+    if(!r->getInterest().isLongLived()) {
       r = m_inRecords.erase(r);
     }
   }

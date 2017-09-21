@@ -365,8 +365,9 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
   for (const shared_ptr<pit::Entry>& pitEntry : pitMatches) {
     NFD_LOG_DEBUG("onIncomingData matching=" << pitEntry->getName());
 
-    // cancel unsatisfy & straggler timer
-    this->cancelUnsatisfyAndStragglerTimer(*pitEntry);
+    // cancel unsatisfy & straggler timer if there are no Long-Lived Interests.
+    if(!pitEntry->hasNonExpiredLongLivedInRecord(now))
+        this->cancelUnsatisfyAndStragglerTimer(*pitEntry);
 
     // remember pending downstreams
     for (const pit::InRecord& inRecord : pitEntry->getInRecords()) {
@@ -385,6 +386,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
     // mark PIT satisfied
     pitEntry->deleteExpiredOrNonLongLivedInRecords(now);
 
+    NFD_LOG_DEBUG("hasNonExpiredLongLivedInRecords ? " << pitEntry->hasNonExpiredLongLivedInRecord(now));
     if(!pitEntry->hasNonExpiredLongLivedInRecord(now)) {
       // Dead Nonce List insert if necessary (for out-record of inFace)
       this->insertDeadNonceList(*pitEntry, true, data.getFreshnessPeriod(), &inFace);
@@ -392,11 +394,8 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 
       // set PIT straggler timer
       this->setStragglerTimer(pitEntry, true, data.getFreshnessPeriod());
-    } else
-       this->setUnsatisfyTimer(pitEntry);
-
-    // set PIT straggler timer
-    this->setStragglerTimer(pitEntry, true, data.getFreshnessPeriod());
+    }// else
+       //this->setUnsatisfyTimer(pitEntry);
   }
 
   // foreach pending downstream

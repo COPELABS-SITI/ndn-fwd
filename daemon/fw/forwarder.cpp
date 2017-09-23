@@ -277,6 +277,26 @@ Forwarder::onOutgoingInterest(const shared_ptr<pit::Entry>& pitEntry, Face& outF
 }
 
 void
+Forwarder::onOutgoingInterestCustom(pit::Entry& pitEntry, Face& outFace, const Interest& interest)
+{
+  NFD_LOG_DEBUG("onOutgoingInterest face=" << outFace.getId() <<
+                " interest=" << pitEntry.getName());
+
+  // insert out-record and perform the removal of the old Interest from the queue of the outFace
+  BOOST_ASSERT(pitEntry.canMatch(interest));
+  auto record = pitEntry.getOutRecord(outFace);
+  if (record == pitEntry.out_end())
+    record = pitEntry.insertOutRecord(const_cast<Face&>(outFace));
+  else if (outFace.getRemoteUri().getScheme().compare("opp") == 0)
+    this->beforeOutRecordUpdate(record->getLastNonce());
+  record->update(interest);
+
+  // send Interest
+  outFace.sendInterest(interest);
+  ++m_counters.nOutInterests;
+}
+
+void
 Forwarder::onInterestReject(const shared_ptr<pit::Entry>& pitEntry)
 {
   if (fw::hasPendingOutRecords(*pitEntry)) {

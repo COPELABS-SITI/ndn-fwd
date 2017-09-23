@@ -173,6 +173,8 @@ public: // forwarding entrypoints and tables
     return m_networkRegionTable;
   }
 
+  void onOutgoingInterestCustom(pit::Entry& pitEntry, Face& outFace, const Interest& interest);
+
 PUBLIC_WITH_TESTS_ELSE_PRIVATE: // pipelines
   /** \brief incoming Interest pipeline
    */
